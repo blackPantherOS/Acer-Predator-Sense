@@ -7,7 +7,6 @@ from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import Qt, QTimer, QProcess
 from PySide6.QtGui import QPalette, QColor
 
-
 from frontend import Ui_PredatorSense
 from ecwrite import *
 import enum

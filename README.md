@@ -18,7 +18,9 @@
     ```
   - Next set ```COREOFFSET``` and ```CACHEOFFSET``` to the mV that you determined to be stable via throttlestop on windows
 
- - From the command line you can run the main script as root:
+ - Try AppImage from release
+ or
+ - From the command line you can run the aps.py script from source as root:
 ```
 su or sudo python3 aps.py
 ```
@@ -49,7 +51,7 @@ And start from main menu
 
 ```
 dnf/apt-get install python3-pip
-pip install qtpy
+pip install pyside6
 pip install git+https://github.com/georgewhewell/undervolt.git
 dnf/apt-get install msr-tools
 ```
