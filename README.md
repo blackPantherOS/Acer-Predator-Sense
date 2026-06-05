@@ -1,5 +1,5 @@
-## PredatorSense™ clone for Acer Predators```PH*```
-### Controls fan speed, gaming modes and undervolting on Linux. This application is intended for Acer Predator Helios 300 (2021) model
+## PredatorSense™ clone for Acer Predators```PH* Series```
+### Controls fan speed, gaming modes and undervolting, keyboard color, charging, etc. modes. This application is intended for Acer Predator many models
 
 ![Predator Sense](data/PredatorSense.jpeg)
 
@@ -8,7 +8,8 @@
 * Using this application with other laptops may potentially damage them. Proceed at your discretion.
 
 ## Usage:
-- ```su/sudo``` is preinstalled required in order to access the Super I/O EC registers (acpi_ec module) and apply undervolt offsets
+- ```acpi_ec``` module is preinstalled requires to work
+- ```su/sudo``` is preinstalled required in order to access the Super I/O EC registers and apply undervolt offsets
 
 - First make sure to set the ```UNDERVOLT_PATH``` in ```aps.py``` to the appropriate location of the undervolt package
   - If you installed without sudo you can find where undervolt is located by doing
