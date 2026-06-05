@@ -1,0 +1,101 @@
+#!/usr/bin/sh
+
+recommend="" # 1/0
+
+#Intel-Rapl:
+#constraint_0
+u_pw_limit_0=157000000
+u_time_w_0=28000000
+u_pw_limit_1=157000000
+u_time_w_1=2440
+
+#constraint_1
+u_m_pw_limit_0=157000000
+u_m_time_w_0=28000000
+u_m_pw_limit_1=157000000
+u_m_time_w_1=2440
+
+
+if [ "$1" == "set" ];then
+
+echo $u_pw_limit_0 | tee /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_0_power_limit_uw
+echo $u_time_w_0 | tee /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_0_time_window_us
+echo $u_pw_limit_1 | tee /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_1_power_limit_uw
+echo $u_time_w_1 | tee /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_1_time_window_us
+echo $u_m_pw_limit_0 | tee /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_0_power_limit_uw
+echo $u_m_time_w_0 | tee /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_0_time_window_us
+echo $u_m_pw_limit_1 | tee /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_1_power_limit_uw
+echo $u_m_time_w_1 | tee /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_1_time_window_us
+
+else
+
+#echo "PW Limit 0: $(cat /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_0_power_limit_uw) Recommend: $u_pw_limit_0"
+#echo "T Window 0: $(cat /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_0_time_window_us) Recommend: $u_time_w_0"
+#echo "PW Limit 1: $(cat /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_1_power_limit_uw) Recommend: $u_pw_limit_1"
+#echo "T Window 1: $(cat /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_1_time_window_us) Recommend: $u_time_w_1" 
+#echo "MMIO Limit  0: $(cat /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_0_power_limit_uw) Recommend: $u_m_pw_limit_0"
+#echo "MMIO Window 0: $(cat /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_0_time_window_us) Recommend: $u_time_w_0"
+#echo "MMIO Limit  1: $(cat /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_1_power_limit_uw) Recommend: $u_m_pw_limit_1"
+#echo "MMIO Window 1: $(cat /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_1_time_window_us) Recommend: $u_m_time_w_1"
+
+# Read and convert values for intel-rapl:0
+constraint_0_power_limit=$(cat /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_0_power_limit_uw)
+constraint_0_time_window=$(cat /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_0_time_window_us)
+constraint_1_power_limit=$(cat /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_1_power_limit_uw)
+constraint_1_time_window=$(cat /sys/devices/virtual/powercap/intel-rapl/intel-rapl:0/constraint_1_time_window_us)
+
+# Convert to human-readable values
+constraint_0_power_limit_w=$((constraint_0_power_limit / 1000000))W
+constraint_0_time_window_s=$(awk "BEGIN {printf \"%.2f\", $constraint_0_time_window / 1000000}")s
+constraint_1_power_limit_w=$((constraint_1_power_limit / 1000000))W
+constraint_1_time_window_ms=$(awk "BEGIN {printf \"%.2f\", $constraint_1_time_window / 1000}")ms
+
+r_constraint_0_power_limit_w=$(($u_pw_limit_0 / 1000000))W
+r_constraint_0_time_window_s=$(awk "BEGIN {printf \"%.2f\", $u_time_w_0/ 1000000}")s
+r_constraint_1_power_limit_w=$(($u_pw_limit_1 / 1000000))W
+r_constraint_1_time_window_ms=$(awk "BEGIN {printf \"%.2f\", $u_time_w_1 / 1000}")ms
+
+ruvv_0="--"
+ruvv_1="--"
+if [ "$recommend" ];then
+ruvv_0="$r_constraint_0_power_limit_w/$r_constraint_0_time_window_s"
+ruvv_1="$r_constraint_1_power_limit_w/$r_constraint_1_time_window_ms"
+fi
+#echo ""
+echo "[ Read values  |  RUVV: recommend undervolt value ]"
+echo ""
+echo "Intel-Rapl:"
+echo "constraint_0: $constraint_0_power_limit_w, $constraint_0_time_window_s (RUVV:$ruvv_0)"
+echo "constraint_1: $constraint_1_power_limit_w, $constraint_1_time_window_ms (RUVV:$ruvv_1)"
+
+# Read and convert values for intel-rapl-mmio:0
+constraint_mmio_0_power_limit=$(cat /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_0_power_limit_uw)
+constraint_mmio_0_time_window=$(cat /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_0_time_window_us)
+constraint_mmio_1_power_limit=$(cat /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_1_power_limit_uw)
+constraint_mmio_1_time_window=$(cat /sys/devices/virtual/powercap/intel-rapl-mmio/intel-rapl-mmio:0/constraint_1_time_window_us)
+
+# Convert to human-readable values
+constraint_mmio_0_power_limit_w=$((constraint_mmio_0_power_limit / 1000000))W
+constraint_mmio_0_time_window_s=$(awk "BEGIN {printf \"%.2f\", $constraint_mmio_0_time_window / 1000000}")s
+constraint_mmio_1_power_limit_w=$((constraint_mmio_1_power_limit / 1000000))W
+constraint_mmio_1_time_window_ms=$(awk "BEGIN {printf \"%.2f\", $constraint_mmio_1_time_window / 1000}")ms
+
+# Convert to human-readable values
+r_constraint_mmio_0_power_limit_w=$(($u_m_pw_limit_0 / 1000000))W
+r_constraint_mmio_0_time_window_s=$(awk "BEGIN {printf \"%.2f\", $u_m_time_w_0 / 1000000}")s
+r_constraint_mmio_1_power_limit_w=$(($u_m_pw_limit_1 / 1000000))W
+r_constraint_mmio_1_time_window_ms=$(awk "BEGIN {printf \"%.2f\", $u_m_time_w_1 / 1000}")ms
+
+mruvv_0="--"
+mruvv_1="--"
+if [ "$recommend" ];then
+mruvv_0="$r_constraint_mmio_0_power_limit_w/$r_constraint_mmio_0_time_window_s"
+mruvv_1="$r_constraint_mmio_1_power_limit_w/$r_constraint_mmio_1_time_window_ms"
+fi
+
+echo ""
+echo "Intel-Rapl-MMIO:"
+echo "constraint_0: $constraint_mmio_0_power_limit_w, $constraint_mmio_0_time_window_s (RUVV:$mruvv_0)"
+echo "constraint_1: $constraint_mmio_1_power_limit_w, $constraint_mmio_1_time_window_ms (RUVV:$mruvv_1)"
+
+fi
