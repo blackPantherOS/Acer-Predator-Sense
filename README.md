@@ -1,7 +1,7 @@
 ## PredatorSense™ clone for Acer Predators```PH*```
 ### Controls fan speed, gaming modes and undervolting on Linux. This application is intended for Acer Predator Helios 300 (2021) model
 
-![Predator Sense](data/PredatorSense.jpg)
+![Predator Sense](data/PredatorSense.jpeg)
 
 ## Disclaimer:
 * Secure Boot is **not** supported.
